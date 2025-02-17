@@ -35,15 +35,35 @@
         - Create role
         ```
         AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query "Account" --output text)
-        eksctl create iamserviceaccount \
-          --name cert-manager-dns01-route53 \
-          --namespace cert-manager \
-          --cluster ${CLUSTER} \
-          --role-name cert-manager-dns01-route53 \
-          --attach-policy-arn arn:aws:iam::${AWS_ACCOUNT_ID}:policy/cert-manager-dns01-route53 \
-          --approve        
+        aws iam create-role \
+          --role-name cert-manager-dns01-role \
+          --assume-role-policy-document '{
+            "Version": "2012-10-17",
+            "Statement": [
+                {
+                    "Effect": "Allow",
+                    "Principal": {
+                        "Service": "pods.eks.amazonaws.com"
+                    },
+                    "Action": [
+                        "sts:AssumeRole",
+                        "sts:TagSession"
+                    ]
+                }
+            ]
+          }'
+        
+        aws iam attach-role-policy \
+          --role-name cert-manager-dns01-role \
+          --policy-arn arn:aws:iam::${AWS_ACCOUNT_ID}:policy/cert-manager-dns01-route53
         ```
+      - Create cert-manager pod identity with the above role
+      - Restart cert-manager to get new credentials
 - Install nginx-controller
     -   helm install my-nginx ingress-nginx/ingress-nginx --namespace nginx-ingress --values nginx-ingress.yaml
+    
+- Create Cert-Issuer for LetsEncrypt
+- Create Deployment, Svc and Ingress
+
 - 
   
