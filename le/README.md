@@ -6,8 +6,8 @@
         - Create Policy
         ```
             aws iam create-policy \
-                 --policy-name cert-manager-acme-dns01-route53 \
-                 --description "This policy allows cert-manager to manage ACME DNS01 records in Route53 hosted zones. See https://cert-manager.io/docs/configuration/acme/dns01/route53" \
+                 --policy-name cert-manager-dns01-route53 \
+                 --description "This policy allows cert-manager to manage  DNS01 records in Route53 hosted zones. See https://cert-manager.io/docs/configuration/acme/dns01/route53" \
                  --policy-document file:///dev/stdin <<EOF
             {
               "Version": "2012-10-17",
